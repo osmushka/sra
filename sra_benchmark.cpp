@@ -10,11 +10,12 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <iostream>
 
 namespace
 {
 
-constexpr const char* kSraPath = "/home/osmushka/SRR29154704/SRR29154704.sra";
+std::string g_sraPath;
 
 // Results are private to each worker thread.
 // This avoids synchronization/atomics in the hot processing loop.
@@ -61,7 +62,7 @@ void BM_SraRead(benchmark::State& state)
 
     // Open once outside the measured loop to obtain the total number
     // of reads that need to be divided among the workers.
-    auto run = ncbi::NGS::openReadCollection(kSraPath);
+    auto run = ncbi::NGS::openReadCollection(g_sraPath);
 
     const std::uint64_t totalReads = run.getReadCount(ngs::Read::all);
 
@@ -93,7 +94,7 @@ void BM_SraRead(benchmark::State& state)
 
                 threads.emplace_back(
                     worker,
-                    kSraPath,
+                    std::cref(g_sraPath),
                     first,
                     count,
                     std::ref(results[i]));
@@ -148,4 +149,28 @@ BENCHMARK(BM_SraRead)
 
 } // namespace
 
-BENCHMARK_MAIN();
+int main(int argc, char** argv)
+{
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <SRA file> [benchmark options]\n";
+        return 1;
+    }
+
+    g_sraPath = argv[1];
+
+    // Remove our SRA path argument before passing the command line to Google Benchmark.
+    for (int i = 1; i < argc - 1; ++i)
+        argv[i] = argv[i + 1];
+
+    --argc;
+
+    benchmark::Initialize(&argc, argv);
+
+    if (benchmark::ReportUnrecognizedArguments(argc, argv))
+        return 1;
+
+    benchmark::RunSpecifiedBenchmarks();
+    benchmark::Shutdown();
+
+    return 0;
+}

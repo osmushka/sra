@@ -1,3 +1,0 @@
-/home/osmushka/work/sra/build-bench/_deps/benchmark-subbuild/CMakeFiles/benchmark-populate.dir
-/home/osmushka/work/sra/build-bench/_deps/benchmark-subbuild/CMakeFiles/edit_cache.dir
-/home/osmushka/work/sra/build-bench/_deps/benchmark-subbuild/CMakeFiles/rebuild_cache.dir
