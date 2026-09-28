@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/sra_benchmark.dir/sra_benchmark.cpp.o -o sra_benchmark  _deps/benchmark-build/src/libbenchmark.a -lngs-c++ -lncbi-ngs -lncbi-vdb -lrt 
